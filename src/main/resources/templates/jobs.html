@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recruitment Portal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <h1>TalentBridge</h1>
+        <p>Recruitment and Applicant Tracking System</p>
+    </div>
+    <a class="button" th:href="@{/jobs/new}">+ Post a Job</a>
+</header>
+
+<main class="container">
+    <section class="welcome">
+        <p class="eyebrow">CAREERS START HERE</p>
+        <h2>Open opportunities</h2>
+        <p>Explore available roles or publish a new vacancy.</p>
+    </section>
+
+    <div class="success" th:if="${message}"
+         th:text="${message}"></div>
+
+    <section class="job-grid">
+        <article class="job-card"
+                 th:each="job : ${jobs}">
+            <span class="status" th:text="${job.status}"></span>
+            <h3 th:text="${job.title}"></h3>
+            <p class="muted">
+                <span th:text="${job.department}"></span>
+                ·
+                <span th:text="${job.location}"></span>
+            </p>
+            <p class="description"
+               th:text="${job.description}"></p>
+        </article>
+    </section>
+
+    <div class="empty" th:if="${#lists.isEmpty(jobs)}">
+        <h3>No vacancies yet</h3>
+        <p>Publish your first job to get started.</p>
+        <a class="button" th:href="@{/jobs/new}">
+            Create first vacancy
+        </a>
+    </div>
+</main>
+</body>
+</html>

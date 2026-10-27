@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Post a Job | TalentBridge</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <h1>TalentBridge</h1>
+        <p>Recruitment and Applicant Tracking System</p>
+    </div>
+    <a class="button secondary" th:href="@{/jobs}">
+        View Jobs
+    </a>
+</header>
+
+<main class="container">
+    <section class="form-card">
+        <p class="eyebrow">RECRUITER WORKSPACE</p>
+        <h2>Publish a vacancy</h2>
+        <p class="muted">Enter the details for the new position.</p>
+
+        <form th:action="@{/jobs}" th:object="${job}"
+              method="post">
+
+            <label for="title">Job title</label>
+            <input id="title" type="text" th:field="*{title}"
+                   placeholder="e.g. Java Developer" required
+                   maxlength="120">
+            <small class="error" th:errors="*{title}"></small>
+
+            <label for="department">Department</label>
+            <input id="department" type="text"
+                   th:field="*{department}"
+                   placeholder="e.g. Engineering" required
+                   maxlength="100">
+            <small class="error"
+                   th:errors="*{department}"></small>
+
+            <label for="location">Location</label>
+            <input id="location" type="text"
+                   th:field="*{location}"
+                   placeholder="e.g. Coimbatore / Remote"
+                   required maxlength="100">
+            <small class="error"
+                   th:errors="*{location}"></small>
+
+            <label for="description">Job description</label>
+            <textarea id="description"
+                      th:field="*{description}"
+                      rows="6"
+                      placeholder="Responsibilities, skills and qualifications..."
+                      required maxlength="4000"></textarea>
+            <small class="error"
+                   th:errors="*{description}"></small>
+
+            <div class="form-actions">
+                <a class="button secondary"
+                   th:href="@{/jobs}">Cancel</a>
+                <button class="button" type="submit">
+                    Publish vacancy
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
