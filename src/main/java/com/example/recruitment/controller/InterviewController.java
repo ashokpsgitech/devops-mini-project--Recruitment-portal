@@ -58,6 +58,7 @@ public class InterviewController {
     public String scheduleForm(@PathVariable Long applicationId, Model model) {
         Application application = applicationService.findByIdOrThrow(applicationId);
         model.addAttribute("application", application);
+        model.addAttribute("app", application);
         model.addAttribute("interviewTypes", Interview.InterviewType.values());
         model.addAttribute("interviewers", userRepository.findAll());
         return "interviews/schedule";

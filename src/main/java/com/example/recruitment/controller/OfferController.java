@@ -57,6 +57,7 @@ public class OfferController {
     public String createOfferForm(@PathVariable Long applicationId, Model model) {
         Application application = applicationService.findByIdOrThrow(applicationId);
         model.addAttribute("application", application);
+        model.addAttribute("app", application);
         return "offers/create";
     }
 

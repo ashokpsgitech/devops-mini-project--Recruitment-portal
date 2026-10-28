@@ -10,13 +10,13 @@
     <div class="tb-page-header">
         <div>
             <h1 class="tb-page-title">Extend Job Offer</h1>
-            <p class="tb-page-subtitle">Candidate: <strong th:text="${application.applicant != null ? application.applicant.fullName : 'Candidate'}">Candidate</strong> &bull; Role: <span th:text="${application.job.title}">Job</span></p>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${app.applicant != null ? app.applicant.fullName : 'Candidate'}">Candidate</strong> &bull; Role: <span th:text="${app.job != null ? app.job.title : ''}">Job</span></p>
         </div>
-        <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Candidate</a>
+        <a th:href="@{/applications/{id}(id=${app.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Candidate</a>
     </div>
 
     <div class="tb-card">
-        <form th:action="@{/offers/create/{appId}(appId=${application.id})}" method="post">
+        <form th:action="@{/offers/create/{appId}(appId=${app.id})}" method="post">
             <div class="tb-form-grid" style="grid-template-columns: 2fr 1fr;">
                 <div class="tb-form-group">
                     <label class="tb-label" for="salary">Annual CTC / Compensation *</label>
@@ -52,7 +52,7 @@
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
-                <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <a th:href="@{/applications/{id}(id=${app.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
                 <button type="submit" class="tb-btn tb-btn-primary">Generate & Extend Offer</button>
             </div>
         </form>

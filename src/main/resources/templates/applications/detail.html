@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Application #' + ${application.id})}"></head>
+<head th:replace="~{fragments/layout :: head('Application #' + ${app.id})}"></head>
 <body>
 <header th:replace="~{fragments/layout :: navbar}"></header>
 
@@ -10,20 +10,20 @@
     <div class="tb-page-header">
         <div>
             <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
-                <h1 class="tb-page-title" style="margin-bottom: 0;">Application #<span th:text="${application.id}">1</span></h1>
-                <span class="tb-badge tb-badge-interview" th:text="${application.stage}">STAGE</span>
+                <h1 class="tb-page-title" style="margin-bottom: 0;">Application #<span th:text="${app.id}">1</span></h1>
+                <span class="tb-badge tb-badge-interview" th:text="${app.stage}">STAGE</span>
             </div>
             <p class="tb-page-subtitle">
-                <strong th:text="${application.applicant != null ? application.applicant.fullName : 'Candidate'}">Candidate Name</strong> &bull;
-                <span th:text="${application.applicant != null ? application.applicant.email : ''}">candidate@example.com</span> &bull;
-                Applied for <a th:href="@{/jobs/{id}(id=${application.job.id})}" th:text="${application.job.title}" style="color: var(--primary-600); font-weight: 600;">Job Title</a>
+                <strong th:text="${app.applicant != null ? app.applicant.fullName : 'Candidate'}">Candidate Name</strong> &bull;
+                <span th:text="${app.applicant != null ? app.applicant.email : ''}">candidate@example.com</span> &bull;
+                Applied for <a th:if="${app.job != null}" th:href="@{/jobs/{id}(id=${app.job.id})}" th:text="${app.job.title}" style="color: var(--primary-600); font-weight: 600;">Job Title</a>
             </p>
         </div>
 
         <!-- Recruiter Action Toolbar -->
         <div sec:authorize="hasAnyRole('RECRUITER', 'ADMIN')" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <a th:href="@{/interviews/schedule/{appId}(appId=${application.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">📅 Schedule Interview</a>
-            <a th:href="@{/offers/create/{appId}(appId=${application.id})}" class="tb-btn tb-btn-primary tb-btn-sm">💼 Extend Offer</a>
+            <a th:href="@{/interviews/schedule/{appId}(appId=${app.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">📅 Schedule Interview</a>
+            <a th:href="@{/offers/create/{appId}(appId=${app.id})}" class="tb-btn tb-btn-primary tb-btn-sm">💼 Extend Offer</a>
         </div>
     </div>
 
@@ -36,17 +36,17 @@
                 <div style="margin: 1rem 0;">
                     <span style="font-size: 0.82rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Cover Letter</span>
                     <p style="margin-top: 0.35rem; color: var(--slate-700); line-height: 1.6; white-space: pre-wrap;"
-                       th:text="${application.coverLetter != null and not #strings.isEmpty(application.coverLetter) ? application.coverLetter : 'No cover letter provided.'}">Cover letter text</p>
+                       th:text="${app.coverLetter != null and not #strings.isEmpty(app.coverLetter) ? app.coverLetter : 'No cover letter provided.'}">Cover letter text</p>
                 </div>
 
                 <div style="padding-top: 1rem; border-top: 1px solid var(--slate-100); display: flex; align-items: center; justify-content: space-between;">
                     <div>
                         <span style="font-size: 0.82rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Resume Attachment</span>
                         <div style="font-weight: 600; color: var(--slate-800); margin-top: 0.2rem;"
-                             th:text="${application.resume != null ? application.resume.originalName : 'None attached'}">resume.pdf</div>
+                             th:text="${app.resume != null ? app.resume.originalName : 'None attached'}">resume.pdf</div>
                     </div>
-                    <div th:if="${application.resume != null}">
-                        <a th:href="@{/applications/resume/{id}/download(id=${application.resume.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">
+                    <div th:if="${app.resume != null}">
+                        <a th:href="@{/applications/resume/{id}/download(id=${app.resume.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">
                             📥 Download Resume
                         </a>
                     </div>
@@ -111,14 +111,14 @@
         <div>
             <div sec:authorize="hasAnyRole('RECRUITER', 'ADMIN')" class="tb-card" style="position: sticky; top: 90px;">
                 <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-900); margin-bottom: 1rem;">Update Pipeline Stage</h3>
-                <form th:action="@{/applications/{id}/stage(id=${application.id})}" method="post">
+                <form th:action="@{/applications/{id}/stage(id=${app.id})}" method="post">
                     <div class="tb-form-group">
                         <label class="tb-label" for="stage">Select Stage</label>
                         <select id="stage" name="stage" class="tb-select">
                             <option th:each="st : ${T(com.example.recruitment.entity.Application.Stage).values()}"
                                     th:value="${st}"
                                     th:text="${st}"
-                                    th:selected="${st == application.stage}">STAGE</option>
+                                    th:selected="${st == app.stage}">STAGE</option>
                         </select>
                     </div>
 
