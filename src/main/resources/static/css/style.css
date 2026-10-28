@@ -605,6 +605,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   font-size: 0.92rem;
+  animation: tbSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .tb-alert-success {
@@ -628,4 +629,202 @@ body {
   text-align: center;
   color: var(--slate-400);
   font-size: 0.85rem;
+}
+
+/* ========================================================================== */
+/* DYNAMIC MOTION & MICRO-ANIMATION SUITE                                      */
+/* ========================================================================== */
+
+@keyframes tbFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tbSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tbSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tbScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tbBadgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes tbBrandGlow {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(79, 70, 229, 0.4);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 6px 26px rgba(168, 85, 247, 0.65);
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes tbShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Page & Container Staggered Entrance */
+.tb-container {
+  animation: tbFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tb-page-header {
+  animation: tbSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Card Spring Transitions & Hover Lift */
+.tb-card {
+  animation: tbSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.tb-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Stat KPI Cards Staggered Animation & Hover */
+.tb-stat-card {
+  animation: tbSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tb-stats-grid > :nth-child(1) { animation-delay: 40ms; }
+.tb-stats-grid > :nth-child(2) { animation-delay: 80ms; }
+.tb-stats-grid > :nth-child(3) { animation-delay: 120ms; }
+.tb-stats-grid > :nth-child(4) { animation-delay: 160ms; }
+
+.tb-stat-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 32px -4px rgba(79, 70, 229, 0.15), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Brand Icon Subtle Aura */
+.tb-brand-icon {
+  animation: tbBrandGlow 3.5s ease-in-out infinite;
+}
+
+/* Notification Counter Dot Pulse */
+.tb-counter-dot {
+  animation: tbBadgePulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Button Tactile Feedback & Hover Glow */
+.tb-btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.15s ease;
+}
+
+.tb-btn:hover {
+  transform: translateY(-1.5px);
+}
+
+.tb-btn:active {
+  transform: scale(0.96) translateY(0);
+}
+
+.tb-btn-primary {
+  background-size: 200% auto;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tb-btn-primary:hover {
+  background-position: right center;
+  box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.45);
+}
+
+/* Table Row Smooth Interaction */
+.tb-table tbody tr {
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.tb-table tbody tr:hover {
+  background-color: #f1f5f9;
+  transform: translateX(4px);
+}
+
+/* Kanban Columns & Candidate Cards Animation */
+.tb-kanban-col {
+  animation: tbScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tb-kanban-board > :nth-child(1) { animation-delay: 50ms; }
+.tb-kanban-board > :nth-child(2) { animation-delay: 100ms; }
+.tb-kanban-board > :nth-child(3) { animation-delay: 150ms; }
+.tb-kanban-board > :nth-child(4) { animation-delay: 200ms; }
+.tb-kanban-board > :nth-child(5) { animation-delay: 250ms; }
+
+.tb-candidate-card {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.tb-candidate-card:hover {
+  transform: translateY(-4px) rotate(0.4deg);
+  box-shadow: 0 12px 24px -3px rgba(15, 23, 42, 0.12);
+  border-color: var(--primary-500);
+}
+
+/* Form Input Interactive Elevation */
+.tb-input, .tb-select, .tb-textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+}
+
+.tb-input:focus, .tb-select:focus, .tb-textarea:focus {
+  transform: translateY(-1px);
+}
+
+/* Pulsing Status Dot for Active States */
+.tb-badge-published::before, .tb-badge-hired::before, .tb-badge-interview::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 0.35rem;
+  animation: tbBadgePulse 2s ease-in-out infinite;
 }
