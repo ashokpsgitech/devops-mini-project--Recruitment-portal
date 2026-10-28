@@ -50,8 +50,18 @@
                 </div>
             </div>
 
-            <button type="submit" class="tb-btn tb-btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 0.5rem;">
-                Register Profile
+            <div class="tb-form-group" style="margin-top: 0.5rem;">
+                <label class="tb-label" for="role">Register As</label>
+                <select id="role" th:field="*{role}" class="tb-input" style="font-weight: 500; cursor: pointer;">
+                    <option value="APPLICANT">👤 Candidate / Applicant (Apply for Jobs)</option>
+                    <option value="RECRUITER">💼 HR / Recruiter (Post Jobs & Manage Pipeline)</option>
+                    <option value="HIRING_MANAGER">🏢 Hiring Manager (Review & Interview)</option>
+                </select>
+                <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="tb-alert-error" style="display:block; margin-top: 0.25rem; font-size:0.75rem;"></span>
+            </div>
+
+            <button type="submit" class="tb-btn tb-btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
+                Create Account
             </button>
         </form>
 

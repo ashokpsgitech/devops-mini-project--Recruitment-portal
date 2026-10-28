@@ -34,4 +34,6 @@ public class RegistrationRequest {
     @NotBlank(message = "Last name is required")
     @Size(max = 100)
     private String lastName;
+
+    private String role = "APPLICANT";
 }

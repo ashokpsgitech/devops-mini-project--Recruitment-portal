@@ -48,12 +48,13 @@ public class AuthController {
         }
 
         try {
-            userService.registerApplicant(
+            userService.registerUser(
                     request.getUsername(),
                     request.getEmail(),
                     request.getPassword(),
                     request.getFirstName(),
-                    request.getLastName());
+                    request.getLastName(),
+                    request.getRole());
 
             redirectAttributes.addFlashAttribute("success",
                     "Account created successfully! Please log in.");

@@ -33,12 +33,12 @@ public class UserService {
     }
 
     /**
-     * Registers a new public applicant account.
-     * Never grants ADMIN, RECRUITER, or HIRING_MANAGER via public registration.
+     * Registers a new user with the specified role.
+     * Supports APPLICANT, RECRUITER, and HIRING_MANAGER.
      */
     @Transactional
-    public User registerApplicant(String username, String email, String rawPassword,
-                                   String firstName, String lastName) {
+    public User registerUser(String username, String email, String rawPassword,
+                             String firstName, String lastName, String roleName) {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username '" + username + "' is already taken.");
         }
@@ -46,15 +46,21 @@ public class UserService {
             throw new IllegalArgumentException("An account with email '" + email + "' already exists.");
         }
 
-        Role applicantRole = roleRepository.findByName("APPLICANT")
-                .orElseThrow(() -> new IllegalStateException("APPLICANT role not seeded."));
+        String targetRole = (roleName != null && !roleName.isBlank()) ? roleName.trim().toUpperCase() : "APPLICANT";
+        if (!targetRole.equals("APPLICANT") && !targetRole.equals("RECRUITER") && !targetRole.equals("HIRING_MANAGER")) {
+            targetRole = "APPLICANT";
+        }
+
+        final String finalRoleName = targetRole;
+        Role role = roleRepository.findByName(finalRoleName)
+                .orElseThrow(() -> new IllegalStateException(finalRoleName + " role not seeded."));
 
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
         user.setEnabled(true);
-        user.getRoles().add(applicantRole);
+        user.getRoles().add(role);
         user = userRepository.save(user);
 
         ApplicantProfile profile = new ApplicantProfile();
@@ -64,8 +70,17 @@ public class UserService {
         profileRepository.save(profile);
 
         auditService.log("USER_REGISTERED", "User", user.getId(),
-                "New applicant registered: " + username);
+                "New user registered: " + username + " with role " + finalRoleName);
         return user;
+    }
+
+    /**
+     * Registers a new public applicant account (delegates to registerUser).
+     */
+    @Transactional
+    public User registerApplicant(String username, String email, String rawPassword,
+                                   String firstName, String lastName) {
+        return registerUser(username, email, rawPassword, firstName, lastName, "APPLICANT");
     }
 
     @Transactional(readOnly = true)
