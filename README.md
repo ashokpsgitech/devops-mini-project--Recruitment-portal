@@ -1,5 +1,7 @@
 # ⚡ TalentBridge Enterprise ATS + Full DevOps Ecosystem
 
+[![TalentBridge CI/CD Pipeline](https://github.com/ashokpsgitech/devops-mini-project--Recruitment-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/ashokpsgitech/devops-mini-project--Recruitment-portal/actions/workflows/ci.yml)
+
 TalentBridge is an enterprise-grade **Recruitment and Applicant Tracking System (ATS)** engineered with **Spring Boot 3**, **Java 21 LTS**, **PostgreSQL 16**, and a complete production DevOps ecosystem featuring **Docker**, **Kubernetes/Azure Container Apps**, **Terraform (IaC)**, **GitHub Actions & Azure DevOps CI/CD**, **Prometheus & Grafana observability**, and **Trivy DevSecOps scanning**.
 
 ---
