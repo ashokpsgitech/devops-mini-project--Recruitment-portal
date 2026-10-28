@@ -2,7 +2,7 @@
 
 [![TalentBridge CI/CD Pipeline](https://github.com/ashokpsgitech/devops-mini-project--Recruitment-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/ashokpsgitech/devops-mini-project--Recruitment-portal/actions/workflows/ci.yml)
 
-TalentBridge is an enterprise-grade **Recruitment and Applicant Tracking System (ATS)** engineered with **Spring Boot 3**, **Java 21 LTS**, **PostgreSQL 16**, and a complete production DevOps ecosystem featuring **Docker**, **Kubernetes/Azure Container Apps**, **Terraform (IaC)**, **GitHub Actions & Azure DevOps CI/CD**, **Prometheus & Grafana observability**, and **Trivy DevSecOps scanning**.
+TalentBridge is an enterprise-grade **Recruitment and Applicant Tracking System (ATS)** engineered with **Spring Boot 3**, **Java 21 LTS**, **PostgreSQL 16**, and a complete DevOps ecosystem featuring **Apache Maven**, **Docker & Docker Compose**, **GitHub Actions CI/CD**, **Prometheus & Grafana observability**, and **Aqua Security Trivy DevSecOps scanning**.
 
 ---
 
@@ -12,10 +12,10 @@ TalentBridge is an enterprise-grade **Recruitment and Applicant Tracking System 
 graph TD
     Client["Browser / REST Client"] --> WebApp["TalentBridge ATS (Spring Boot 3 + Java 21)"]
     WebApp --> Security["Spring Security (RBAC + BCrypt + CSRF)"]
-    WebApp --> JPA["Spring Data JPA + Hibernate"]
+    WebApp --> JPA["Spring Data JPA + Hibernate (Entity Graphs)"]
     JPA --> Postgres[("PostgreSQL 16 (Flyway Migrations)")]
-    WebApp --> Storage["LocalStorageService / Azure Blob Storage"]
-    WebApp --> Mail["Mailpit / Azure SMTP"]
+    WebApp --> Storage["Resume Local Storage Service"]
+    WebApp --> Mail["Mailpit SMTP Service"]
     WebApp --> Actuator["Spring Actuator + Micrometer"]
     Actuator --> Prometheus["Prometheus (:9090)"]
     Prometheus --> Grafana["Grafana Dashboards (:3000)"]
@@ -37,15 +37,15 @@ graph TD
 
 | Layer | Technologies |
 |---|---|
+| **Build & Dependency Management** | Apache Maven 3.9+, Maven Wrapper (`mvnw`, `mvnw.cmd`) |
 | **Core Framework** | Java 21 LTS, Spring Boot 3.5.7, Spring Security 6 |
 | **Persistence** | Spring Data JPA, Hibernate ORM 6.6, PostgreSQL 16, Flyway 10 |
 | **API & Documentation** | SpringDoc OpenAPI 2.8.5, Swagger UI, Spring MVC REST |
-| **Frontend UI** | Thymeleaf 3, Plus Jakarta Sans, Modern Glassmorphism CSS |
-| **Testing** | JUnit 5, Mockito, Spring Boot Test, MockMvc, H2 (test scope) |
+| **Frontend UI** | Thymeleaf 3, Plus Jakarta Sans, Modern Glassmorphism CSS, Vanilla JS |
+| **Testing** | JUnit 5, Mockito, Spring Boot Test, MockMvc, JaCoCo, H2 (test scope) |
 | **Observability** | Spring Actuator, Micrometer Prometheus, Prometheus 2.52, Grafana 11 |
 | **Containerization** | Docker multi-stage build (distroless-style JRE, non-root user), Docker Compose |
-| **CI/CD** | GitHub Actions (`.github/workflows/ci.yml`), Azure DevOps (`azure-pipelines.yml`) |
-| **Infrastructure as Code** | HashiCorp Terraform 1.5+ (Azure App Service, PostgreSQL Flexible, Key Vault) |
+| **CI/CD & DevSecOps** | GitHub Actions (`.github/workflows/ci.yml`), Aqua Security Trivy |
 
 ---
 
@@ -88,9 +88,9 @@ The database migrations (`V2__seed_roles_and_admin.sql`) provision seed credenti
 
 | Role | Username | Password | Purpose |
 |---|---|---|---|
-| **Administrator** | `admin` | `Admin@12345` | Complete system access & API docs |
-| **Recruiter** | *Register or create via admin* | - | Job posting, Kanban pipeline, offers |
-| **Hiring Manager** | *Register or create via admin* | - | Interview evaluations & scorecards |
+| **Administrator** | `admin` | `Admin@123!` | Complete system access & API docs |
+| **Recruiter** | *Register directly or via admin* | - | Job posting, Kanban pipeline, offers |
+| **Hiring Manager** | *Register directly or via admin* | - | Interview evaluations & scorecards |
 | **Applicant** | *Register via `/register`* | - | Job search, apply, accept/decline offers |
 
 ---
@@ -109,37 +109,11 @@ The project includes unit, service, repository, security, and REST controller te
 
 ---
 
-## 6. Infrastructure as Code (Azure Terraform)
+## 6. Automated CI/CD & DevSecOps Pipeline
 
-To provision production Azure cloud infrastructure:
-
-```bash
-cd terraform
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your Azure parameters and DB password
-
-terraform init
-terraform plan
-terraform apply
-```
-
-Provisioned Azure Resources:
-- **Resource Group:** Dedicated project environment.
-- **Azure Database for PostgreSQL Flexible Server:** Highly available managed database.
-- **Azure Linux App Service:** Hosts containerized TalentBridge image.
-- **Azure Key Vault:** Secures database credentials using Managed Identity access.
-- **Azure Storage Account:** Private blob container for candidate resumes.
-- **Application Insights & Log Analytics:** Cloud telemetry and distributed tracing.
-
----
-
-## 7. CI/CD Pipelines
-
-- **GitHub Actions (`.github/workflows/ci.yml`):**
-  - Java 21 build & verification with Maven wrapper.
-  - Automated unit and integration testing.
-  - JaCoCo test coverage report upload.
-  - **Trivy container security scanning** (SARIF upload to GitHub Security tab).
-  - Docker image smoke testing.
-- **Azure DevOps (`azure-pipelines.yml`):**
-  - Multi-stage pipeline covering Build, Test, ACR Push, and Deployment to Azure Web App Container.
+The automated GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request:
+- **Build & Verification**: JDK 21 build with Maven Wrapper (`./mvnw clean verify -B`).
+- **Unit & Integration Testing**: 20 automated tests validating business rules, authorization, and repositories.
+- **Code Coverage**: JaCoCo reports archived for analysis.
+- **DevSecOps Security Scanning**: Aqua Security Trivy scans the Docker image for OS/package CVE vulnerabilities.
+- **Docker Verification**: Verifies container layers, startup behavior, and actuator health probe.
