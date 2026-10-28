@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Extend Employment Offer')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 760px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Extend Job Offer</h1>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${application.applicant.user.fullName}">Candidate</strong> &bull; Role: <span th:text="${application.job.title}">Job</span></p>
+        </div>
+        <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Candidate</a>
+    </div>
+
+    <div class="tb-card">
+        <form th:action="@{/offers/create/{appId}(appId=${application.id})}" method="post">
+            <div class="tb-form-grid" style="grid-template-columns: 2fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="salary">Annual CTC / Compensation *</label>
+                    <input type="number" id="salary" name="salary" class="tb-input" placeholder="e.g. 2400000" step="50000" required>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="currency">Currency *</label>
+                    <select id="currency" name="currency" class="tb-select" required>
+                        <option value="INR" selected>INR (₹)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="startDate">Proposed Joining Date *</label>
+                    <input type="date" id="startDate" name="startDate" class="tb-input" required>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="expiryDate">Offer Validity / Expiry Date *</label>
+                    <input type="date" id="expiryDate" name="expiryDate" class="tb-input" required>
+                </div>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="notes">Offer Terms & Special Conditions</label>
+                <textarea id="notes" name="notes" class="tb-textarea" placeholder="Include signing bonus clauses, stock option grants, benefits overview, and reporting manager details..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <button type="submit" class="tb-btn tb-btn-primary">Generate & Extend Offer</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Executive Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Enterprise ATS Command Center</h1>
+            <p class="tb-page-subtitle">Real-time recruitment telemetry, pipeline velocity, and system metrics</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/recruiter/pipeline}" class="tb-btn tb-btn-primary">View Pipeline Board</a>
+            <a th:href="@{/jobs/new}" class="tb-btn tb-btn-secondary">+ Post New Role</a>
+        </div>
+    </div>
+
+    <!-- KPI Stats -->
+    <div class="tb-stats-grid">
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Active Postings</span>
+            <span class="tb-stat-value" th:text="${totalJobs}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Total Applications</span>
+            <span class="tb-stat-value" th:text="${totalApplications}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Total Hired</span>
+            <span class="tb-stat-value" style="color: var(--emerald-600);" th:text="${totalHired}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Actuator Health</span>
+            <span class="tb-stat-value" style="font-size: 1.5rem; color: var(--emerald-600);">● UP</span>
+        </div>
+    </div>
+
+    <!-- Recent Postings & Quick Links -->
+    <div class="tb-card">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">Recent Job Openings</h2>
+            <a th:href="@{/recruiter/jobs}" class="tb-btn tb-btn-secondary tb-btn-sm">View All Jobs &rarr;</a>
+        </div>
+
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Role Title</th>
+                    <th>Department</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="job : ${recentJobs}">
+                    <td style="font-weight: 600;" th:text="${job.title}">Senior Engineer</td>
+                    <td th:text="${job.department != null ? job.department.name : 'General'}">Engineering</td>
+                    <td th:text="${job.location}">Remote</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${job.status.name() == 'PUBLISHED' ? 'tb-badge-published' : 'tb-badge-draft'}"
+                              th:text="${job.status}">PUBLISHED</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/applications/job/{id}(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Candidates</a>
+                        <a th:href="@{/jobs/{id}/edit(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Edit</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentJobs)}">
+                    <td colspan="5" style="text-align: center; color: var(--slate-400); padding: 2rem;">No jobs published yet. Click '+ Post New Role' to begin.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

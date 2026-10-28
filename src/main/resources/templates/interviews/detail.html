@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Interview Details')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 860px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Interview Session #<span th:text="${interview.id}">1</span></h1>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${interview.application.applicant.user.fullName}">Candidate</strong> &bull; Position: <span th:text="${interview.application.job.title}">Job</span></p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/interviews}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Schedule</a>
+            <a th:if="${interview.status.name() == 'SCHEDULED'}"
+               th:href="@{/interviews/{id}/feedback(id=${interview.id})}"
+               class="tb-btn tb-btn-primary tb-btn-sm">Submit Scorecard</a>
+        </div>
+    </div>
+
+    <div class="tb-card">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">Session Information</h2>
+            <span class="tb-badge"
+                  th:classappend="${interview.status.name() == 'COMPLETED' ? 'tb-badge-hired' : 'tb-badge-interview'}"
+                  th:text="${interview.status}">SCHEDULED</span>
+        </div>
+
+        <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Round</span>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-top: 0.2rem;" th:text="${interview.type}">TECHNICAL</div>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Interviewer</span>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-top: 0.2rem;" th:text="${interview.interviewer != null ? interview.interviewer.fullName : 'Unassigned'}">Interviewer</div>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Time & Duration</span>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-top: 0.2rem;"
+                     th:text="${#temporals.format(interview.scheduledAt, 'MMM dd, yyyy HH:mm')} + ' (' + ${interview.durationMinutes} + ' mins)'">Time</div>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Location / Video Link</span>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-top: 0.2rem;">
+                    <a th:if="${interview.locationOrUrl != null and interview.locationOrUrl.startsWith('http')}"
+                       th:href="${interview.locationOrUrl}" target="_blank" style="color: var(--primary-600);">Join Video Call &rarr;</a>
+                    <span th:unless="${interview.locationOrUrl != null and interview.locationOrUrl.startsWith('http')}"
+                          th:text="${interview.locationOrUrl}">Location</span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${interview.notes != null and not #strings.isEmpty(interview.notes)}" style="padding-top: 1rem; border-top: 1px solid var(--slate-100);">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Briefing Notes</span>
+            <p style="color: var(--slate-700); margin-top: 0.35rem; line-height: 1.6; white-space: pre-wrap;" th:text="${interview.notes}">Notes</p>
+        </div>
+    </div>
+
+    <!-- Feedback Assessment (if submitted) -->
+    <div class="tb-card" th:if="${feedback != null}">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">Evaluation Scorecard</h2>
+            <span class="tb-badge"
+                  th:classappend="${feedback.recommendation.name().contains('HIRE') ? 'tb-badge-hired' : 'tb-badge-rejected'}"
+                  th:text="${feedback.recommendation}">STRONG_HIRE</span>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Overall Rating</span>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-600); margin-top: 0.2rem;">
+                <span th:text="${feedback.rating}">5</span> / 5 ★
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Technical Competence Assessment</span>
+            <p style="color: var(--slate-700); margin-top: 0.35rem; line-height: 1.6; white-space: pre-wrap;" th:text="${feedback.technicalNotes}">Technical notes</p>
+        </div>
+
+        <div>
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Culture & Behavioral Observations</span>
+            <p style="color: var(--slate-700); margin-top: 0.35rem; line-height: 1.6; white-space: pre-wrap;" th:text="${feedback.culturalFitNotes}">Culture notes</p>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

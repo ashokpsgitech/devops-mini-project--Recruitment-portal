@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'TalentBridge Dashboards'
+    orgId: 1
+    folder: 'TalentBridge'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

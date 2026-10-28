@@ -1,0 +1,125 @@
+services:
+  # ============================================================================
+  # TALENTBRIDGE ATS WEB APPLICATION
+  # ============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: talentbridge-ats:1.0.0
+    container_name: talentbridge-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      DB_URL: jdbc:postgresql://postgres:5432/recruitment_db
+      DB_USERNAME: recruitment_app
+      DB_PASSWORD: ${DB_PASSWORD:-SecretPostgresPassword123!}
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      RESUME_STORAGE_PATH: /var/data/talentbridge/resumes
+      LOGGING_LEVEL_APP: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    volumes:
+      - app_resumes:/var/data/talentbridge/resumes
+      - app_logs:/var/log/talentbridge
+    networks:
+      - talentbridge-net
+
+  # ============================================================================
+  # POSTGRESQL DATABASE
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: talentbridge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recruitment_db
+      POSTGRES_USER: recruitment_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SecretPostgresPassword123!}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recruitment_app -d recruitment_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - talentbridge-net
+
+  # ============================================================================
+  # MAILPIT (LOCAL SMTP & WEB UI)
+  # ============================================================================
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: talentbridge-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP Port
+      - "8025:8025" # Webmail UI
+    networks:
+      - talentbridge-net
+
+  # ============================================================================
+  # PROMETHEUS (OBSERVABILITY & METRICS SCRAPER)
+  # ============================================================================
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: talentbridge-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - talentbridge-net
+
+  # ============================================================================
+  # GRAFANA (TELEMETRY DASHBOARDS)
+  # ============================================================================
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: talentbridge-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - talentbridge-net
+
+# ==============================================================================
+# NETWORKS & VOLUMES
+# ==============================================================================
+networks:
+  talentbridge-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  app_resumes:
+  app_logs:
+  prometheus_data:
+  grafana_data:

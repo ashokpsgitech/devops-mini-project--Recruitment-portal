@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Applicant Career Portal')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Candidate Career Portal</h1>
+            <p class="tb-page-subtitle">Track your job applications, interview schedules, and active offers</p>
+        </div>
+        <div>
+            <a th:href="@{/jobs}" class="tb-btn tb-btn-primary">Explore All Openings &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Active Applications -->
+    <div class="tb-card">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">My Recent Applications</h2>
+            <a th:href="@{/applications}" class="tb-btn tb-btn-secondary tb-btn-sm">View All &rarr;</a>
+        </div>
+
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Department</th>
+                    <th>Location</th>
+                    <th>Applied Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+                    <td style="font-weight: 600;" th:text="${app.job.title}">Job Title</td>
+                    <td th:text="${app.job.department != null ? app.job.department.name : 'Engineering'}">Engineering</td>
+                    <td th:text="${app.job.location}">Remote</td>
+                    <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${app.stage.name() == 'HIRED' ? 'tb-badge-hired' : (app.stage.name() == 'REJECTED' ? 'tb-badge-rejected' : 'tb-badge-applied')}"
+                              th:text="${app.stage}">APPLIED</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/applications/{id}(id=${app.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">View Status</a>
+                    </td>
+                </tr>
+                <tr th:if="${applications == null or #lists.isEmpty(applications.content)}">
+                    <td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">You haven't submitted any applications yet. <a th:href="@{/jobs}" style="color: var(--primary-600); font-weight: 600;">Browse open jobs</a>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Upcoming Interview Schedule -->
+    <div class="tb-card" th:if="${upcomingInterviews != null and not #lists.isEmpty(upcomingInterviews)}">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">Your Scheduled Interviews</h2>
+        </div>
+
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Round</th>
+                    <th>Date & Time</th>
+                    <th>Meeting Link / Location</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="intv : ${upcomingInterviews}">
+                    <td style="font-weight: 600;" th:text="${intv.application.job.title}">Job</td>
+                    <td><span class="tb-badge tb-badge-interview" th:text="${intv.type}">TECHNICAL</span></td>
+                    <td th:text="${#temporals.format(intv.scheduledAt, 'MMM dd, yyyy HH:mm')}">Time</td>
+                    <td>
+                        <a th:if="${intv.locationOrUrl != null and intv.locationOrUrl.startsWith('http')}"
+                           th:href="${intv.locationOrUrl}" target="_blank" class="tb-btn tb-btn-primary tb-btn-sm">Join Video Call</a>
+                        <span th:unless="${intv.locationOrUrl != null and intv.locationOrUrl.startsWith('http')}"
+                              th:text="${intv.locationOrUrl}">Conference Room</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

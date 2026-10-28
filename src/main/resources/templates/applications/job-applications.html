@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Applications — ' + ${job.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Candidate Pipeline: <span th:text="${job.title}">Position</span></h1>
+            <p class="tb-page-subtitle">Review applicant resumes, update recruitment stages, and schedule interviews</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/recruiter/pipeline(jobId=${job.id})}" class="tb-btn tb-btn-primary">Board View</a>
+            <a th:href="@{/recruiter/jobs}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Jobs</a>
+        </div>
+    </div>
+
+    <div class="tb-card">
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Email</th>
+                    <th>Applied On</th>
+                    <th>Stage</th>
+                    <th>Resume</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+                    <td style="font-weight: 600;">
+                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant.user.fullName}" style="color: var(--primary-600); text-decoration: none;">Candidate Name</a>
+                    </td>
+                    <td th:text="${app.applicant.user.email}">candidate@example.com</td>
+                    <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${app.stage.name() == 'HIRED' ? 'tb-badge-hired' : (app.stage.name() == 'REJECTED' ? 'tb-badge-rejected' : 'tb-badge-applied')}"
+                              th:text="${app.stage}">STAGE</span>
+                    </td>
+                    <td>
+                        <a th:if="${app.resume != null}"
+                           th:href="@{/applications/resume/{id}/download(id=${app.resume.id})}"
+                           class="tb-btn tb-btn-secondary tb-btn-sm" style="font-size: 0.75rem;">📥 Resume</a>
+                        <span th:unless="${app.resume != null}" style="color: var(--slate-400); font-size: 0.8rem;">None</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/applications/{id}(id=${app.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Review</a>
+                    </td>
+                </tr>
+                <tr th:if="${applications == null or #lists.isEmpty(applications.content)}">
+                    <td colspan="6" style="text-align: center; color: var(--slate-400); padding: 3rem;">
+                        No applications received yet for this position.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,107 @@
+name: TalentBridge CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ============================================================================
+  # JOB 1: Build, Unit Test & Code Coverage
+  # ============================================================================
+  build-and-test:
+    name: Build & Test (Java 21)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Validate Maven Wrapper
+        uses: gradle/wrapper-validation-action@v3
+        continue-on-error: true
+
+      - name: Run Build, Flyway validation, and Tests
+        run: ./mvnw clean verify -B
+
+      - name: Upload JaCoCo Coverage Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-coverage-report
+          path: target/site/jacoco/
+          retention-days: 14
+
+      - name: Upload Test Results (Surefire)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: surefire-test-reports
+          path: target/surefire-reports/
+          retention-days: 7
+
+  # ============================================================================
+  # JOB 2: Container Security & Vulnerability Scan (Trivy)
+  # ============================================================================
+  security-scan:
+    name: DevSecOps Vulnerability Scan
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build local Docker image for scanning
+        run: docker build -t talentbridge-ats:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner on container image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'talentbridge-ats:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ============================================================================
+  # JOB 3: Container Build & Package Verification
+  # ============================================================================
+  container-build:
+    name: Docker Container Verification
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and smoke-test Docker container
+        run: |
+          docker build -t talentbridge-ats:test .
+          docker run -d --name test-app -p 8080:8080 talentbridge-ats:test
+          sleep 15
+          docker logs test-app
+          docker stop test-app || true

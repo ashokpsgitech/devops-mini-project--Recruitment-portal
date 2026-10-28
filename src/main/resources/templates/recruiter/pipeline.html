@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Candidate Pipeline Kanban')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 1540px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Candidate Pipeline Board</h1>
+            <p class="tb-page-subtitle">Visual Kanban workflow for candidate progression across hiring stages</p>
+        </div>
+
+        <!-- Filter by Job -->
+        <form th:action="@{/recruiter/pipeline}" method="get" style="display: flex; gap: 0.75rem; align-items: center;">
+            <select name="jobId" class="tb-select" style="min-width: 260px;" onchange="this.form.submit()">
+                <option value="">-- All Active Requisitions --</option>
+                <option th:each="j : ${jobs}" th:value="${j.id}" th:text="${j.title}" th:selected="${j.id == selectedJobId}">Job Title</option>
+            </select>
+            <a th:if="${selectedJobId != null}" th:href="@{/recruiter/pipeline}" class="tb-btn tb-btn-secondary tb-btn-sm">Clear Filter</a>
+        </form>
+    </div>
+
+    <!-- Kanban Grid -->
+    <div class="tb-kanban-board">
+        <div th:each="st : ${stages}" class="tb-kanban-col">
+            <div class="tb-kanban-header">
+                <span class="tb-kanban-title" th:text="${st}">STAGE</span>
+                <span class="tb-kanban-count" th:text="${#lists.size(pipeline.get(st))}">0</span>
+            </div>
+
+            <div class="tb-kanban-cards">
+                <div th:each="app : ${pipeline.get(st)}" class="tb-candidate-card">
+                    <div class="tb-candidate-name">
+                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant.user.fullName}" style="color: var(--slate-900); text-decoration: none;">Candidate Name</a>
+                    </div>
+                    <div class="tb-candidate-role" th:text="${app.job.title}">Position</div>
+
+                    <div style="font-size: 0.75rem; color: var(--slate-400); margin-bottom: 0.75rem;">
+                        Applied: <span th:text="${#temporals.format(app.appliedAt, 'MMM dd')}">Date</span>
+                    </div>
+
+                    <!-- Quick Stage Transition Selector -->
+                    <form th:action="@{/recruiter/pipeline/{appId}/move(appId=${app.id})}" method="post" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--slate-100);">
+                        <input type="hidden" name="currentJobId" th:value="${selectedJobId}">
+                        <div style="display: flex; gap: 0.35rem;">
+                            <select name="newStage" class="tb-select" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; height: 30px;">
+                                <option th:each="s : ${stages}" th:value="${s}" th:text="${s}" th:selected="${s == st}">STAGE</option>
+                            </select>
+                            <button type="submit" class="tb-btn tb-btn-secondary tb-btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; height: 30px;">→</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${#lists.isEmpty(pipeline.get(st))}" style="text-align: center; color: var(--slate-400); font-size: 0.8rem; padding: 2rem 0;">
+                    No candidates
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

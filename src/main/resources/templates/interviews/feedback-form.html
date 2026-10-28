@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Submit Interview Scorecard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 760px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Candidate Evaluation Scorecard</h1>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${interview.application.applicant.user.fullName}">Candidate</strong> &bull; Round: <span th:text="${interview.type}">TECHNICAL</span></p>
+        </div>
+        <a th:href="@{/interviews/{id}(id=${interview.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Session</a>
+    </div>
+
+    <div class="tb-card">
+        <form th:action="@{/interviews/{id}/feedback(id=${interview.id})}" method="post">
+            <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="rating">Overall Rating (1 = Poor, 5 = Exceptional) *</label>
+                    <select id="rating" name="rating" class="tb-select" required>
+                        <option value="5">5 — Exceptional / Exceeds Bar</option>
+                        <option value="4" selected>4 — Strong / Meets Bar</option>
+                        <option value="3">3 — Adequate / Borderline</option>
+                        <option value="2">2 — Needs Development</option>
+                        <option value="1">1 — Does Not Meet Requirements</option>
+                    </select>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="recommendation">Hiring Recommendation *</label>
+                    <select id="recommendation" name="recommendation" class="tb-select" required>
+                        <option value="STRONG_YES">STRONG YES — Exceptional Hire</option>
+                        <option value="YES" selected>YES — Meets All Criteria</option>
+                        <option value="NEUTRAL">NEUTRAL — Needs Consensus Review</option>
+                        <option value="NO">NO — Does Not Meet Requirements</option>
+                        <option value="STRONG_NO">STRONG NO — Significant Concerns</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="technicalNotes">Technical Depth, Problem Solving & Architecture Assessment *</label>
+                <textarea id="technicalNotes" name="technicalNotes" class="tb-textarea" placeholder="Detail coding accuracy, algorithmic reasoning, edge case handling, and system design insights..." required></textarea>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="culturalFitNotes">Collaboration, Communication & Value Alignment</label>
+                <textarea id="culturalFitNotes" name="culturalFitNotes" class="tb-textarea" placeholder="Assess candidate communication clarity, receptiveness to feedback, and team culture alignment..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/interviews/{id}(id=${interview.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <button type="submit" class="tb-btn tb-btn-primary">Submit Official Scorecard</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

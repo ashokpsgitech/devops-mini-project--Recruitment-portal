@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Application #' + ${application.id})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                <h1 class="tb-page-title" style="margin-bottom: 0;">Application #<span th:text="${application.id}">1</span></h1>
+                <span class="tb-badge tb-badge-interview" th:text="${application.stage}">STAGE</span>
+            </div>
+            <p class="tb-page-subtitle">
+                <strong th:text="${application.applicant.user.fullName}">Candidate Name</strong> &bull;
+                <span th:text="${application.applicant.user.email}">candidate@example.com</span> &bull;
+                Applied for <a th:href="@{/jobs/{id}(id=${application.job.id})}" th:text="${application.job.title}" style="color: var(--primary-600); font-weight: 600;">Job Title</a>
+            </p>
+        </div>
+
+        <!-- Recruiter Action Toolbar -->
+        <div sec:authorize="hasAnyRole('RECRUITER', 'ADMIN')" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a th:href="@{/interviews/schedule/{appId}(appId=${application.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">📅 Schedule Interview</a>
+            <a th:href="@{/offers/create/{appId}(appId=${application.id})}" class="tb-btn tb-btn-primary tb-btn-sm">💼 Extend Offer</a>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Left: Application Details & Timeline -->
+        <div>
+            <!-- Cover Letter & Resume -->
+            <div class="tb-card">
+                <h2 class="tb-card-title">Candidate Submission</h2>
+                <div style="margin: 1rem 0;">
+                    <span style="font-size: 0.82rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Cover Letter</span>
+                    <p style="margin-top: 0.35rem; color: var(--slate-700); line-height: 1.6; white-space: pre-wrap;"
+                       th:text="${application.coverLetter != null and not #strings.isEmpty(application.coverLetter) ? application.coverLetter : 'No cover letter provided.'}">Cover letter text</p>
+                </div>
+
+                <div style="padding-top: 1rem; border-top: 1px solid var(--slate-100); display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span style="font-size: 0.82rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Resume Attachment</span>
+                        <div style="font-weight: 600; color: var(--slate-800); margin-top: 0.2rem;"
+                             th:text="${application.resume != null ? application.resume.originalName : 'None attached'}">resume.pdf</div>
+                    </div>
+                    <div th:if="${application.resume != null}">
+                        <a th:href="@{/applications/resume/{id}/download(id=${application.resume.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">
+                            📥 Download Resume
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage Progression Audit Trail -->
+            <div class="tb-card">
+                <h2 class="tb-card-title">Recruitment Stage History</h2>
+                <div style="margin-top: 1rem;">
+                    <div th:each="h : ${history}" style="display: flex; gap: 1rem; margin-bottom: 1.25rem; position: relative;">
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary-600); margin-top: 4px; box-shadow: 0 0 0 4px var(--primary-100);"></div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--slate-900); font-size: 0.95rem;">
+                                Moved to <span class="tb-badge tb-badge-screening" style="font-size: 0.7rem;" th:text="${h.toStage}">STAGE</span>
+                                <span style="font-weight: 400; color: var(--slate-400); font-size: 0.8rem; margin-left: 0.5rem;"
+                                      th:text="${#temporals.format(h.changedAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+                            </div>
+                            <div style="color: var(--slate-500); font-size: 0.85rem; margin-top: 0.2rem;">
+                                Changed by: <strong th:text="${h.changedBy}">recruiter</strong>
+                                <span th:if="${h.notes != null and not #strings.isEmpty(h.notes)}" th:text="' — ' + ${h.notes}">notes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${history == null or #lists.isEmpty(history)}" style="color: var(--slate-400); font-size: 0.85rem;">
+                        No history entries recorded yet.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interviews associated with this application -->
+            <div class="tb-card" th:if="${interviews != null and not #lists.isEmpty(interviews)}">
+                <h2 class="tb-card-title">Interviews for this Candidate</h2>
+                <div class="tb-table-wrapper" style="margin-top: 1rem;">
+                    <table class="tb-table">
+                        <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th>Interviewer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Feedback</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="i : ${interviews}">
+                            <td style="font-weight: 600;" th:text="${i.type}">TECHNICAL</td>
+                            <td th:text="${i.interviewer != null ? i.interviewer.fullName : 'Unassigned'}">Interviewer</td>
+                            <td th:text="${#temporals.format(i.scheduledAt, 'MMM dd, HH:mm')}">Date</td>
+                            <td><span class="tb-badge" th:classappend="${i.status.name() == 'COMPLETED' ? 'tb-badge-hired' : 'tb-badge-interview'}" th:text="${i.status}">STATUS</span></td>
+                            <td>
+                                <a th:href="@{/interviews/{id}(id=${i.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">View Notes</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Recruiter Stage Transition Box -->
+        <div>
+            <div sec:authorize="hasAnyRole('RECRUITER', 'ADMIN')" class="tb-card" style="position: sticky; top: 90px;">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-900); margin-bottom: 1rem;">Update Pipeline Stage</h3>
+                <form th:action="@{/applications/{id}/stage(id=${application.id})}" method="post">
+                    <div class="tb-form-group">
+                        <label class="tb-label" for="stage">Select Stage</label>
+                        <select id="stage" name="stage" class="tb-select">
+                            <option th:each="st : ${T(com.example.recruitment.entity.Application.Stage).values()}"
+                                    th:value="${st}"
+                                    th:text="${st}"
+                                    th:selected="${st == application.stage}">STAGE</option>
+                        </select>
+                    </div>
+
+                    <div class="tb-form-group">
+                        <label class="tb-label" for="notes">Internal Stage Notes</label>
+                        <textarea id="notes" name="notes" class="tb-textarea" style="min-height: 80px;" placeholder="Optional notes on why this candidate was moved..."></textarea>
+                    </div>
+
+                    <button type="submit" class="tb-btn tb-btn-primary" style="width: 100%; padding: 0.75rem;">
+                        Save Stage Transition
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

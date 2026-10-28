@@ -1,0 +1,7 @@
+prefix             = "talentbridge"
+environment        = "prod"
+location           = "eastus"
+db_admin_user      = "talentadmin"
+db_admin_password  = "SuperSecretSecureP@ssw0rd2026!"
+app_service_sku    = "B1"
+postgres_sku       = "B_Standard_B1ms"

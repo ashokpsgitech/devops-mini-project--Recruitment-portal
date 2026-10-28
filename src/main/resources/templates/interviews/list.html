@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Interview Schedule')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Interview Schedule</h1>
+            <p class="tb-page-subtitle">Track technical rounds, behavioral assessments, and executive evaluations</p>
+        </div>
+    </div>
+
+    <div class="tb-card">
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Position</th>
+                    <th>Round Type</th>
+                    <th>Interviewer</th>
+                    <th>Scheduled Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="i : ${interviews}">
+                    <td style="font-weight: 600;" th:text="${i.application.applicant.user.fullName}">Candidate Name</td>
+                    <td th:text="${i.application.job.title}">Position</td>
+                    <td><span class="tb-badge tb-badge-interview" th:text="${i.type}">TECHNICAL</span></td>
+                    <td th:text="${i.interviewer != null ? i.interviewer.fullName : 'Unassigned'}">Interviewer</td>
+                    <td th:text="${#temporals.format(i.scheduledAt, 'MMM dd, yyyy HH:mm')}">Date & Time</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${i.status.name() == 'COMPLETED' ? 'tb-badge-hired' : (i.status.name() == 'CANCELLED' ? 'tb-badge-rejected' : 'tb-badge-interview')}"
+                              th:text="${i.status}">SCHEDULED</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/interviews/{id}(id=${i.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Details</a>
+                        <a th:if="${i.status.name() == 'SCHEDULED'}"
+                           th:href="@{/interviews/{id}/feedback(id=${i.id})}"
+                           class="tb-btn tb-btn-primary tb-btn-sm">Feedback</a>
+                    </td>
+                </tr>
+                <tr th:if="${interviews == null or #lists.isEmpty(interviews)}">
+                    <td colspan="7" style="text-align: center; color: var(--slate-400); padding: 3rem;">
+                        No interviews currently scheduled.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

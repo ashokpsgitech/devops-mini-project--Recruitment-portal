@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Schedule Interview')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 760px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Schedule Interview Session</h1>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${application.applicant.user.fullName}">Candidate</strong> &bull; Role: <span th:text="${application.job.title}">Job</span></p>
+        </div>
+        <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Candidate</a>
+    </div>
+
+    <div class="tb-card">
+        <form th:action="@{/interviews/schedule/{appId}(appId=${application.id})}" method="post">
+            <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="interviewerId">Assigned Interviewer *</label>
+                    <select id="interviewerId" name="interviewerId" class="tb-select" required>
+                        <option value="">-- Choose Evaluator --</option>
+                        <option th:each="user : ${interviewers}" th:value="${user.id}" th:text="${user.fullName} + ' (' + ${user.email} + ')'">Interviewer</option>
+                    </select>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="interviewType">Evaluation Round *</label>
+                    <select id="interviewType" name="interviewType" class="tb-select" required>
+                        <option th:each="type : ${interviewTypes}" th:value="${type}" th:text="${type}">TECHNICAL</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tb-form-grid" style="grid-template-columns: 2fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="scheduledTime">Scheduled Date & Time *</label>
+                    <input type="datetime-local" id="scheduledTime" name="scheduledTime" class="tb-input" required>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="durationMinutes">Duration (Minutes)</label>
+                    <input type="number" id="durationMinutes" name="durationMinutes" class="tb-input" value="60" min="15" step="15" required>
+                </div>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="locationOrUrl">Meeting Location / Video Conference Link *</label>
+                <input type="text" id="locationOrUrl" name="locationOrUrl" class="tb-input" placeholder="e.g. https://meet.google.com/abc-defg-hij or Conference Room 3B" required>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="notes">Briefing Notes for Candidate & Interviewer</label>
+                <textarea id="notes" name="notes" class="tb-textarea" placeholder="Outline focus areas, live coding problem expectations, or system architecture topics..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/applications/{id}(id=${application.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <button type="submit" class="tb-btn tb-btn-primary">Confirm & Send Invites</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

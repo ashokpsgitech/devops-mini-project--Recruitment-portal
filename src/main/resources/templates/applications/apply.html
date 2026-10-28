@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Apply for ' + ${job.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 760px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Submit Application</h1>
+            <p class="tb-page-subtitle">Applying for <strong th:text="${job.title}">Position</strong> &bull; <span th:text="${job.location}">Location</span></p>
+        </div>
+        <a th:href="@{/jobs/{id}(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Job</a>
+    </div>
+
+    <div class="tb-card">
+        <form th:action="@{/applications/apply/{id}(id=${job.id})}" method="post" enctype="multipart/form-data">
+            <div class="tb-form-group">
+                <label class="tb-label" for="resumeFile">Upload Resume (PDF, DOCX — Max 5MB) *</label>
+                <input type="file" id="resumeFile" name="resumeFile" class="tb-input" accept=".pdf,.doc,.docx" required>
+                <p style="font-size: 0.8rem; color: var(--slate-400); margin-top: 0.35rem;">Your resume will be safely stored and reviewed by our talent acquisition team.</p>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="coverLetter">Cover Letter / Note to Hiring Manager</label>
+                <textarea id="coverLetter" name="coverLetter" class="tb-textarea" placeholder="Tell us why you are interested in this position and highlight key achievements..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/jobs/{id}(id=${job.id})}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <button type="submit" class="tb-btn tb-btn-primary" style="padding: 0.75rem 1.75rem;">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

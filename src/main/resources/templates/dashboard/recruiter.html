@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Recruiter Command Center')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Recruiter Workspace</h1>
+            <p class="tb-page-subtitle">Candidate throughput, upcoming interviews, and offer tracking</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/recruiter/pipeline}" class="tb-btn tb-btn-primary">Kanban Pipeline</a>
+            <a th:href="@{/jobs/new}" class="tb-btn tb-btn-secondary">+ Post Role</a>
+        </div>
+    </div>
+
+    <!-- Funnel KPIs -->
+    <div class="tb-stats-grid">
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Open Requisitions</span>
+            <span class="tb-stat-value" th:text="${openJobs}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">In Review / Applied</span>
+            <span class="tb-stat-value" th:text="${applied}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Interviews Ongoing</span>
+            <span class="tb-stat-value" style="color: var(--primary-600);" th:text="${interviews}">0</span>
+        </div>
+        <div class="tb-stat-card">
+            <span class="tb-stat-label">Pending Offers</span>
+            <span class="tb-stat-value" style="color: var(--amber-600);" th:text="${pendingOffers}">0</span>
+        </div>
+    </div>
+
+    <!-- Upcoming Interviews -->
+    <div class="tb-card">
+        <div class="tb-card-header">
+            <h2 class="tb-card-title">Upcoming Interview Rounds</h2>
+            <a th:href="@{/interviews}" class="tb-btn tb-btn-secondary tb-btn-sm">All Interviews &rarr;</a>
+        </div>
+
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Role</th>
+                    <th>Type</th>
+                    <th>Interviewer</th>
+                    <th>Scheduled For</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="intv : ${upcomingInterviews}">
+                    <td style="font-weight: 600;" th:text="${intv.application.applicant.user.fullName}">Candidate Name</td>
+                    <td th:text="${intv.application.job.title}">Role</td>
+                    <td><span class="tb-badge tb-badge-interview" th:text="${intv.type}">TECHNICAL</span></td>
+                    <td th:text="${intv.interviewer != null ? intv.interviewer.fullName : 'Unassigned'}">Interviewer</td>
+                    <td th:text="${#temporals.format(intv.scheduledAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                    <td>
+                        <a th:href="@{/interviews/{id}(id=${intv.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Details</a>
+                        <a th:href="@{/interviews/{id}/feedback(id=${intv.id})}" class="tb-btn tb-btn-primary tb-btn-sm">Feedback</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(upcomingInterviews)}">
+                    <td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">No upcoming interviews scheduled.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

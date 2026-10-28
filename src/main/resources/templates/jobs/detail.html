@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${job.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/jobs}" style="color: var(--slate-500); text-decoration: none; font-weight: 500; font-size: 0.9rem;">&larr; Back to all openings</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Left: Job Details -->
+        <div>
+            <div class="tb-card">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span class="tb-badge tb-badge-screening" th:text="${job.department != null ? job.department.name : 'Engineering'}">Department</span>
+                    <span class="tb-badge tb-badge-published" th:text="${job.employmentType}">FULL_TIME</span>
+                </div>
+
+                <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--slate-900); margin-bottom: 0.5rem;" th:text="${job.title}">Job Title</h1>
+
+                <div style="display: flex; gap: 1.5rem; color: var(--slate-500); font-size: 0.95rem; margin-bottom: 2rem;">
+                    <span>📍 <strong th:text="${job.location}">Remote</strong></span>
+                    <span th:if="${job.salaryMin != null}">💰 <strong th:text="'₹' + ${job.salaryMin} + ' - ₹' + ${job.salaryMax}">Salary</strong></span>
+                    <span th:if="${job.closingDate != null}">📅 Apply by: <strong th:text="${#temporals.format(job.closingDate, 'MMM dd, yyyy')}">Date</strong></span>
+                </div>
+
+                <div style="border-top: 1px solid var(--slate-100); padding-top: 1.5rem;">
+                    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--slate-900); margin-bottom: 0.75rem;">Role Overview</h2>
+                    <div style="color: var(--slate-700); line-height: 1.7; white-space: pre-wrap;" th:text="${job.description}">Role description</div>
+                </div>
+
+                <div style="border-top: 1px solid var(--slate-100); padding-top: 1.5rem; margin-top: 1.5rem;" th:if="${job.requirements != null and not #strings.isEmpty(job.requirements)}">
+                    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--slate-900); margin-bottom: 0.75rem;">Key Requirements & Qualifications</h2>
+                    <div style="color: var(--slate-700); line-height: 1.7; white-space: pre-wrap;" th:text="${job.requirements}">Requirements</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Action Box -->
+        <div>
+            <div class="tb-card" style="position: sticky; top: 90px;">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-900); margin-bottom: 1rem;">Interested in this position?</h3>
+                <p style="color: var(--slate-600); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Submit your application in seconds with your resume and cover letter.
+                </p>
+
+                <a th:href="@{/applications/apply/{id}(id=${job.id})}" class="tb-btn tb-btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+                    Apply for this Job &rarr;
+                </a>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100); font-size: 0.8rem; color: var(--slate-400);">
+                    Posted by TalentBridge Talent Acquisition team. Equal opportunity employer.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

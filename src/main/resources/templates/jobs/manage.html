@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Job Requisitions')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Job Requisition Management</h1>
+            <p class="tb-page-subtitle">Publish, modify, or close active recruitment postings</p>
+        </div>
+        <a th:href="@{/jobs/new}" class="tb-btn tb-btn-primary">+ Create New Role</a>
+    </div>
+
+    <div class="tb-card">
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Department</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="job : ${jobs}">
+                    <td style="font-weight: 600;">
+                        <a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}" style="color: var(--primary-600); text-decoration: none;">Title</a>
+                    </td>
+                    <td th:text="${job.department != null ? job.department.name : 'General'}">Engineering</td>
+                    <td th:text="${job.location}">Remote</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${job.status.name() == 'PUBLISHED' ? 'tb-badge-published' : (job.status.name() == 'CLOSED' ? 'tb-badge-closed' : 'tb-badge-draft')}"
+                              th:text="${job.status}">PUBLISHED</span>
+                    </td>
+                    <td th:text="${#temporals.format(job.createdAt, 'MMM dd, yyyy')}">Date</td>
+                    <td style="white-space: nowrap;">
+                        <a th:href="@{/applications/job/{id}(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Applications</a>
+                        <a th:href="@{/jobs/{id}/edit(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">Edit</a>
+
+                        <!-- Publish toggle form -->
+                        <form th:if="${job.status.name() == 'DRAFT'}" th:action="@{/jobs/{id}/status(id=${job.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="status" value="PUBLISHED">
+                            <button type="submit" class="tb-btn tb-btn-success tb-btn-sm">Publish</button>
+                        </form>
+
+                        <form th:if="${job.status.name() == 'PUBLISHED'}" th:action="@{/jobs/{id}/status(id=${job.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="status" value="CLOSED">
+                            <button type="submit" class="tb-btn tb-btn-danger tb-btn-sm">Close</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${jobs == null or #lists.isEmpty(jobs.content)}">
+                    <td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2.5rem;">
+                        No job requisitions found. Click '+ Create New Role' above to get started.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

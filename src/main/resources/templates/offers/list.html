@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Job Offers')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title">Offer Letters & Compensation</h1>
+            <p class="tb-page-subtitle">Track extended employment offers, start dates, and candidate acceptances</p>
+        </div>
+    </div>
+
+    <div class="tb-card">
+        <div class="tb-table-wrapper">
+            <table class="tb-table">
+                <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Role</th>
+                    <th>Compensation</th>
+                    <th>Target Start Date</th>
+                    <th>Offer Expiry</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${offers}">
+                    <td style="font-weight: 600;" th:text="${o.application.applicant.user.fullName}">Candidate Name</td>
+                    <td th:text="${o.application.job.title}">Position</td>
+                    <td style="font-weight: 600;" th:text="${o.currency} + ' ' + ${#numbers.formatDecimal(o.salary, 0, 'COMMA', 0, 'POINT')}">₹ 2,400,000</td>
+                    <td th:text="${o.startDate != null ? #temporals.format(o.startDate, 'MMM dd, yyyy') : 'TBD'}">Start Date</td>
+                    <td th:text="${o.expiryDate != null ? #temporals.format(o.expiryDate, 'MMM dd, yyyy') : 'No expiry'}">Expiry Date</td>
+                    <td>
+                        <span class="tb-badge"
+                              th:classappend="${o.status.name() == 'ACCEPTED' ? 'tb-badge-hired' : (o.status.name() == 'DECLINED' ? 'tb-badge-rejected' : 'tb-badge-pending')}"
+                              th:text="${o.status}">PENDING</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/offers/{id}(id=${o.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">View Letter</a>
+                    </td>
+                </tr>
+                <tr th:if="${offers == null or #lists.isEmpty(offers)}">
+                    <td colspan="7" style="text-align: center; color: var(--slate-400); padding: 3rem;">
+                        No offers currently recorded.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

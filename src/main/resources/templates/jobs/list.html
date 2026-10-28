@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Explore Careers')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Search Hero Header -->
+    <div style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border-radius: var(--radius-xl); padding: 3rem 2rem; margin-bottom: 2.5rem; color: white; text-align: center; box-shadow: var(--shadow-lg);">
+        <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.5rem;">Find Your Next Role</h1>
+        <p style="color: var(--slate-300); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">Explore career opportunities across our world-class engineering, product, and operations teams.</p>
+
+        <form th:action="@{/jobs}" method="get" style="display: flex; gap: 0.75rem; max-width: 720px; margin: 0 auto; flex-wrap: wrap;">
+            <input type="text" name="title" th:value="${title}" class="tb-input" placeholder="Search by role title or skill..." style="flex: 2; min-width: 200px;">
+            <input type="text" name="location" th:value="${location}" class="tb-input" placeholder="Location or 'Remote'..." style="flex: 1; min-width: 150px;">
+            <button type="submit" class="tb-btn tb-btn-primary" style="padding: 0.75rem 1.75rem; font-size: 1rem;">Search</button>
+        </form>
+    </div>
+
+    <!-- Job Cards Grid -->
+    <div class="tb-page-header">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--slate-900);">Available Positions</h2>
+        <span th:if="${jobs != null}" th:text="${jobs.totalElements} + ' opportunities found'" style="color: var(--slate-500); font-weight: 500;"></span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem;">
+        <div th:each="job : ${jobs}" class="tb-card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <span class="tb-badge tb-badge-screening" th:text="${job.department != null ? job.department.name : 'Engineering'}">Engineering</span>
+                    <span class="tb-badge tb-badge-published" th:text="${job.employmentType}">FULL_TIME</span>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--slate-900); margin-bottom: 0.5rem;" th:text="${job.title}">Senior Engineer</h3>
+
+                <div style="display: flex; gap: 1rem; color: var(--slate-500); font-size: 0.85rem; margin-bottom: 1rem;">
+                    <span>📍 <span th:text="${job.location}">Remote</span></span>
+                    <span th:if="${job.salaryMin != null}">💰 <span th:text="'₹' + ${job.salaryMin} + ' - ₹' + ${job.salaryMax}">₹10L - ₹20L</span></span>
+                </div>
+
+                <p style="color: var(--slate-600); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                   th:text="${job.description}">
+                    Join our team to build next-generation applications.
+                </p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/jobs/{id}(id=${job.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">View Details</a>
+                <a th:href="@{/applications/apply/{id}(id=${job.id})}" class="tb-btn tb-btn-primary tb-btn-sm">Apply Now &rarr;</a>
+            </div>
+        </div>
+
+        <div th:if="${jobs == null or #lists.isEmpty(jobs.content)}" style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: white; border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--slate-700);">No open positions match your search criteria</h3>
+            <p style="color: var(--slate-500); margin-top: 0.5rem;">Try adjusting your keywords or clearing the search filter.</p>
+            <a th:href="@{/jobs}" class="tb-btn tb-btn-secondary" style="margin-top: 1.25rem;">View All Jobs</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

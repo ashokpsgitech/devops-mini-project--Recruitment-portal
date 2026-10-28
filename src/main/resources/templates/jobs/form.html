@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${jobId != null ? 'Edit Requisition' : 'Create Job Post'})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="max-width: 860px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="tb-page-header">
+        <div>
+            <h1 class="tb-page-title" th:text="${jobId != null ? 'Edit Requisition' : 'Create New Job Requisition'}">Create Job</h1>
+            <p class="tb-page-subtitle">Define job description, requirements, salary bandwidth, and department</p>
+        </div>
+        <a th:href="@{/recruiter/jobs}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Listings</a>
+    </div>
+
+    <div class="tb-card">
+        <form th:action="${jobId != null ? '/jobs/' + jobId : '/jobs'}" th:object="${job}" method="post">
+            <div class="tb-form-group">
+                <label class="tb-label" for="title">Position Title *</label>
+                <input type="text" id="title" th:field="*{title}" class="tb-input" placeholder="e.g. Senior Backend Engineer (Java)" required>
+                <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="tb-alert-error" style="font-size:0.8rem; margin-top:0.3rem;"></span>
+            </div>
+
+            <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="departmentId">Department</label>
+                    <select id="departmentId" th:field="*{departmentId}" class="tb-select">
+                        <option value="">-- Select Department --</option>
+                        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">Engineering</option>
+                    </select>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="location">Location / Remote Status *</label>
+                    <input type="text" id="location" th:field="*{location}" class="tb-input" placeholder="e.g. Bengaluru, India or Remote" required>
+                    <span th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="tb-alert-error" style="font-size:0.8rem; margin-top:0.3rem;"></span>
+                </div>
+            </div>
+
+            <div class="tb-form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="tb-form-group">
+                    <label class="tb-label" for="employmentType">Employment Type</label>
+                    <select id="employmentType" th:field="*{employmentType}" class="tb-select">
+                        <option th:each="type : ${employmentTypes}" th:value="${type}" th:text="${type}">FULL_TIME</option>
+                    </select>
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="salaryMin">Min Salary (Annual)</label>
+                    <input type="number" id="salaryMin" th:field="*{salaryMin}" class="tb-input" placeholder="1200000" step="50000">
+                </div>
+
+                <div class="tb-form-group">
+                    <label class="tb-label" for="salaryMax">Max Salary (Annual)</label>
+                    <input type="number" id="salaryMax" th:field="*{salaryMax}" class="tb-input" placeholder="2400000" step="50000">
+                </div>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="closingDate">Application Closing Date</label>
+                <input type="date" id="closingDate" th:field="*{closingDate}" class="tb-input">
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="description">Role Overview & Responsibilities *</label>
+                <textarea id="description" th:field="*{description}" class="tb-textarea" placeholder="Detail the core duties, team context, and technical expectations..." required></textarea>
+                <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="tb-alert-error" style="font-size:0.8rem; margin-top:0.3rem;"></span>
+            </div>
+
+            <div class="tb-form-group">
+                <label class="tb-label" for="requirements">Candidate Requirements & Skills</label>
+                <textarea id="requirements" th:field="*{requirements}" class="tb-textarea" placeholder="Must have: Java 21, Spring Boot 3, PostgreSQL, Docker, Azure..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+                <a th:href="@{/recruiter/jobs}" class="tb-btn tb-btn-secondary">Cancel</a>
+                <button type="submit" class="tb-btn tb-btn-primary" th:text="${jobId != null ? 'Update Requisition' : 'Save & Publish Draft'}">Save</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
