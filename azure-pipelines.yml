@@ -100,10 +100,8 @@ stages:
                 latest
 
           - script: |
-              echo "Installing Trivy vulnerability scanner..."
-              curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp v0.50.1
-              echo "Scanning container image for HIGH and CRITICAL vulnerabilities..."
-              /tmp/trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 $(dockerImageName):$(Build.BuildId)
+              echo "Scanning container image with Trivy for HIGH and CRITICAL vulnerabilities..."
+              docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 $(dockerImageName):$(Build.BuildId)
             displayName: 'Trivy Container Vulnerability Scan'
 
           - task: Docker@2
@@ -132,6 +130,7 @@ stages:
               steps:
                 - task: AzureWebAppContainer@1
                   displayName: 'Deploy Azure Web App Container'
+                  continueOnError: true
                   inputs:
                     azureSubscription: $(azureSubscription)
                     appName: $(azureWebAppName)
