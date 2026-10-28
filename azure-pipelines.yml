@@ -92,8 +92,9 @@ stages:
           - task: Docker@2
             displayName: 'Build Docker Image'
             inputs:
-              command: 'build'
+              containerRegistry: 'TalentBridge-ACR-ServiceConnection'
               repository: $(dockerImageName)
+              command: 'build'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               tags: |
                 $(Build.BuildId)
@@ -101,7 +102,7 @@ stages:
 
           - script: |
               echo "Scanning container image with Trivy for HIGH and CRITICAL vulnerabilities..."
-              docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 $(dockerImageName):$(Build.BuildId)
+              docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 $(acrRegistry)/$(dockerImageName):$(Build.BuildId)
             displayName: 'Trivy Container Vulnerability Scan'
 
           - task: Docker@2
