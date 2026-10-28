@@ -17,7 +17,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  mavenCacheDir: $(Pipeline.Workspace)/.m2/repository
+  mavenCacheDir: $(HOME)/.m2/repository
   dockerImageName: 'talentbridge-ats'
   azureSubscription: 'Azure-DevOps-TalentBridge-SPN'
   acrRegistry: 'ashoktalentbridgeacr.azurecr.io'
