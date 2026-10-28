@@ -49,8 +49,8 @@ stages:
             displayName: 'Cache Maven packages'
 
           - script: |
-              chmod +x ./mvnw
-              ./mvnw clean verify -B
+              chmod +x ./mvnw || true
+              sh ./mvnw clean verify -B
             displayName: 'Run Maven Verify & Jacoco'
 
           - task: PublishTestResults@2
