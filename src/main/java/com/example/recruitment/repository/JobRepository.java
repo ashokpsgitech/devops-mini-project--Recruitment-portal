@@ -3,6 +3,7 @@ package com.example.recruitment.repository;
 import com.example.recruitment.entity.Job;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,11 +12,18 @@ import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
 
+    @Override
+    @EntityGraph(attributePaths = {"department"})
+    Page<Job> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"department"})
     Page<Job> findByStatus(Job.Status status, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"department"})
     Page<Job> findByStatusAndTitleContainingIgnoreCase(
             Job.Status status, String title, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"department"})
     @Query("""
         SELECT j FROM Job j
         WHERE j.status = :status
@@ -30,5 +38,6 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     long countByStatus(Job.Status status);
 
+    @EntityGraph(attributePaths = {"department"})
     List<Job> findTop5ByStatusOrderByCreatedAtDesc(Job.Status status);
 }
