@@ -34,9 +34,9 @@
                 <tbody>
                 <tr th:each="app : ${applications}">
                     <td style="font-weight: 600;">
-                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant.user.fullName}" style="color: var(--primary-600); text-decoration: none;">Candidate Name</a>
+                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant != null ? app.applicant.fullName : 'Candidate'}" style="color: var(--primary-600); text-decoration: none;">Candidate Name</a>
                     </td>
-                    <td th:text="${app.applicant.user.email}">candidate@example.com</td>
+                    <td th:text="${app.applicant != null ? app.applicant.email : ''}">candidate@example.com</td>
                     <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
                     <td>
                         <span class="tb-badge"

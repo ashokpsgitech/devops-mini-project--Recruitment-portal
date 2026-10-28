@@ -109,6 +109,7 @@ public class ApplicationController {
         enforceApplicantOwnership(app, auth);
 
         model.addAttribute("application", app);
+        model.addAttribute("app", app);
         model.addAttribute("history", applicationService.getHistory(id));
         model.addAttribute("interviews", interviewService.findByApplication(id));
 
@@ -195,7 +196,9 @@ public class ApplicationController {
     // -----------------------------------------------------------------------
 
     private void enforceApplicantOwnership(Application app, Authentication auth) {
-        boolean isOwner = app.getApplicant().getUser().getUsername().equals(auth.getName());
+        boolean isOwner = app.getApplicant() != null
+                && app.getApplicant().getUser() != null
+                && app.getApplicant().getUser().getUsername().equals(auth.getName());
         boolean isPrivileged = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_RECRUITER")
                         || a.getAuthority().equals("ROLE_ADMIN")

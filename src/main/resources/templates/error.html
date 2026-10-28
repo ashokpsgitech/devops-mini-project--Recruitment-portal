@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; display: flex; flex-direction: column;">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="tb-container" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div class="tb-card" style="max-width: 540px; width: 100%; text-align: center; padding: 3rem 2rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">⚡</div>
+        <h1 class="tb-page-title" style="font-size: 1.75rem; margin-bottom: 0.5rem;" th:text="${errorTitle != null ? errorTitle : 'Oops! Something went wrong'}">Error</h1>
+        <p class="tb-page-subtitle" style="margin-bottom: 2rem;" th:text="${errorMessage != null ? errorMessage : 'The requested resource could not be found or an unexpected error occurred.'}">An unexpected error occurred.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a th:href="@{/dashboard}" class="tb-btn tb-btn-primary">Return to Dashboard &rarr;</a>
+            <a th:href="@{/jobs}" class="tb-btn tb-btn-secondary">Browse Openings</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
+

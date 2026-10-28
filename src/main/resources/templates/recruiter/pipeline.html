@@ -34,7 +34,7 @@
             <div class="tb-kanban-cards">
                 <div th:each="app : ${pipeline.get(st)}" class="tb-candidate-card">
                     <div class="tb-candidate-name">
-                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant.user.fullName}" style="color: var(--slate-900); text-decoration: none;">Candidate Name</a>
+                        <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.applicant != null ? app.applicant.fullName : 'Candidate'}" style="color: var(--slate-900); text-decoration: none;">Candidate Name</a>
                     </div>
                     <div class="tb-candidate-role" th:text="${app.job.title}">Position</div>
 

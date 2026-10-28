@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="i : ${interviews}">
-                    <td style="font-weight: 600;" th:text="${i.application.applicant.user.fullName}">Candidate Name</td>
+                    <td style="font-weight: 600;" th:text="${i.application.applicant != null ? i.application.applicant.fullName : 'Candidate'}">Candidate Name</td>
                     <td th:text="${i.application.job.title}">Position</td>
                     <td><span class="tb-badge tb-badge-interview" th:text="${i.type}">TECHNICAL</span></td>
                     <td th:text="${i.interviewer != null ? i.interviewer.fullName : 'Unassigned'}">Interviewer</td>

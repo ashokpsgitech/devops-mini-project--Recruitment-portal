@@ -14,8 +14,8 @@
                 <span class="tb-badge tb-badge-interview" th:text="${application.stage}">STAGE</span>
             </div>
             <p class="tb-page-subtitle">
-                <strong th:text="${application.applicant.user.fullName}">Candidate Name</strong> &bull;
-                <span th:text="${application.applicant.user.email}">candidate@example.com</span> &bull;
+                <strong th:text="${application.applicant != null ? application.applicant.fullName : 'Candidate'}">Candidate Name</strong> &bull;
+                <span th:text="${application.applicant != null ? application.applicant.email : ''}">candidate@example.com</span> &bull;
                 Applied for <a th:href="@{/jobs/{id}(id=${application.job.id})}" th:text="${application.job.title}" style="color: var(--primary-600); font-weight: 600;">Job Title</a>
             </p>
         </div>

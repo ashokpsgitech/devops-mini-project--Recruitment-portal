@@ -59,7 +59,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="intv : ${upcomingInterviews}">
-                    <td style="font-weight: 600;" th:text="${intv.application.applicant.user.fullName}">Candidate Name</td>
+                    <td style="font-weight: 600;" th:text="${intv.application.applicant != null ? intv.application.applicant.fullName : 'Candidate'}">Candidate Name</td>
                     <td th:text="${intv.application.job.title}">Role</td>
                     <td><span class="tb-badge tb-badge-interview" th:text="${intv.type}">TECHNICAL</span></td>
                     <td th:text="${intv.interviewer != null ? intv.interviewer.fullName : 'Unassigned'}">Interviewer</td>

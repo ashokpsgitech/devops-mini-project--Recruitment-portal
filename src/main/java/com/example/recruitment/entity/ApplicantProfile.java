@@ -51,6 +51,13 @@ public class ApplicantProfile {
     void onUpdate() { this.updatedAt = Instant.now(); }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        String first = firstName != null ? firstName : "";
+        String last = lastName != null ? lastName : "";
+        String full = (first + " " + last).trim();
+        return full.isEmpty() ? (user != null ? user.getUsername() : "Candidate") : full;
+    }
+
+    public String getEmail() {
+        return user != null ? user.getEmail() : "";
     }
 }

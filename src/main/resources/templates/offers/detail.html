@@ -10,7 +10,7 @@
     <div class="tb-page-header">
         <div>
             <h1 class="tb-page-title">Employment Offer</h1>
-            <p class="tb-page-subtitle">Candidate: <strong th:text="${offer.application.applicant.user.fullName}">Candidate</strong> &bull; Role: <span th:text="${offer.application.job.title}">Position</span></p>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${offer.application.applicant != null ? offer.application.applicant.fullName : 'Candidate'}">Candidate</strong> &bull; Role: <span th:text="${offer.application.job.title}">Position</span></p>
         </div>
         <div style="display: flex; gap: 0.75rem;">
             <a th:href="@{/offers}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Offers</a>

@@ -10,7 +10,7 @@
     <div class="tb-page-header">
         <div>
             <h1 class="tb-page-title">Candidate Evaluation Scorecard</h1>
-            <p class="tb-page-subtitle">Candidate: <strong th:text="${interview.application.applicant.user.fullName}">Candidate</strong> &bull; Round: <span th:text="${interview.type}">TECHNICAL</span></p>
+            <p class="tb-page-subtitle">Candidate: <strong th:text="${interview.application.applicant != null ? interview.application.applicant.fullName : 'Candidate'}">Candidate</strong> &bull; Round: <span th:text="${interview.type}">TECHNICAL</span></p>
         </div>
         <a th:href="@{/interviews/{id}(id=${interview.id})}" class="tb-btn tb-btn-secondary tb-btn-sm">&larr; Back to Session</a>
     </div>

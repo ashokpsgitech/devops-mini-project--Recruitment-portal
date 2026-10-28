@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="o : ${offers}">
-                    <td style="font-weight: 600;" th:text="${o.application.applicant.user.fullName}">Candidate Name</td>
+                    <td style="font-weight: 600;" th:text="${o.application.applicant != null ? o.application.applicant.fullName : 'Candidate'}">Candidate Name</td>
                     <td th:text="${o.application.job.title}">Position</td>
                     <td style="font-weight: 600;" th:text="${o.currency} + ' ' + ${#numbers.formatDecimal(o.salary, 0, 'COMMA', 0, 'POINT')}">₹ 2,400,000</td>
                     <td th:text="${o.startDate != null ? #temporals.format(o.startDate, 'MMM dd, yyyy') : 'TBD'}">Start Date</td>
