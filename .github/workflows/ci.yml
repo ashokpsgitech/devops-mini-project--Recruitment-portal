@@ -29,10 +29,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Validate Maven Wrapper
-        uses: gradle/wrapper-validation-action@v3
-        continue-on-error: true
-
       - name: Run Build, Flyway validation, and Tests
         run: |
           chmod +x ./mvnw || true
