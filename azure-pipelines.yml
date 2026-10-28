@@ -20,7 +20,7 @@ variables:
   mavenCacheDir: $(Pipeline.Workspace)/.m2/repository
   dockerImageName: 'talentbridge-ats'
   azureSubscription: 'Azure-DevOps-TalentBridge-SPN'
-  acrRegistry: 'talentbridgeacr.azurecr.io'
+  acrRegistry: 'ashoktalentbridgeacr.azurecr.io'
   azureWebAppName: 'talentbridge-ats-prod'
 
 stages:
