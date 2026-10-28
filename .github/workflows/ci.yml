@@ -35,8 +35,8 @@ jobs:
 
       - name: Run Build, Flyway validation, and Tests
         run: |
-          chmod +x ./mvnw
-          ./mvnw clean verify -B
+          chmod +x ./mvnw || true
+          sh ./mvnw clean verify -B
 
       - name: Upload JaCoCo Coverage Report
         uses: actions/upload-artifact@v4

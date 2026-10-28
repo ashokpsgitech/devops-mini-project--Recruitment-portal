@@ -1,14 +1,7 @@
 name: TalentBridge Azure CD Deployment
 
 on:
-  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - '.gitignore'
+  workflow_dispatch: # Manual trigger only when ready for Azure cloud deployment
 
 permissions:
   id-token: write # Required for Azure OIDC authentication
