@@ -108,3 +108,4 @@ stages:
               echo "Docker build completed successfully."
               docker images | grep $(dockerImageName)
             displayName: 'Build Docker Image for Local Deployment'
+
