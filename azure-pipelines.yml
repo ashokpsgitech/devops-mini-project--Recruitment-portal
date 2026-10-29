@@ -1,0 +1,110 @@
+# ==============================================================================
+# TalentBridge ATS — Azure DevOps CI Pipeline
+# Purpose: Detects changes in GitHub repository, runs automated builds,
+#          executes JUnit tests, checks code quality, and builds the Docker image.
+# Deployment target: Localhost / On-Premise Docker Compose
+# ==============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  mavenCacheDir: $(HOME)/.m2/repository
+  dockerImageName: 'talentbridge-ats'
+
+stages:
+  # ============================================================================
+  # STAGE 1: Build & Automated Testing (CI)
+  # ============================================================================
+  - stage: BuildAndTest
+    displayName: 'CI: Build, Unit & Integration Tests'
+    jobs:
+      - job: MavenBuild
+        displayName: 'Maven Build & Test'
+        steps:
+          # 1. Checkout GitHub repository
+          - checkout: self
+            displayName: 'Checkout Code from GitHub'
+
+          # 2. Setup Java 21 JDK
+          - task: JavaToolInstaller@0
+            inputs:
+              versionSpec: '21'
+              jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'PreInstalled'
+            displayName: 'Set up JDK 21'
+
+          # 3. Cache Maven dependencies for fast builds
+          - task: Cache@2
+            inputs:
+              key: 'maven | "$(Agent.OS)" | pom.xml'
+              restoreKeys: |
+                maven | "$(Agent.OS)"
+              path: $(mavenCacheDir)
+            displayName: 'Cache Maven packages'
+
+          # 4. Compile, run tests, and generate coverage report
+          - script: |
+              chmod +x ./mvnw || true
+              ./mvnw clean verify -B
+            displayName: 'Execute Maven Clean Verify (Unit & Integration Tests)'
+
+          # 5. Publish test results to Azure DevOps dashboard
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/surefire-reports/*.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+            displayName: 'Publish JUnit Test Results'
+
+          # 6. Publish JaCoCo code coverage
+          - task: PublishCodeCoverageResults@2
+            inputs:
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
+            displayName: 'Publish JaCoCo Code Coverage Report'
+
+          # 7. Package and publish JAR artifact for local deployment
+          - task: CopyFiles@2
+            inputs:
+              contents: 'target/*.jar'
+              targetFolder: '$(Build.ArtifactStagingDirectory)'
+            displayName: 'Stage Build Artifacts (JAR)'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              artifactName: 'drop'
+            displayName: 'Publish Build Artifacts to Pipeline'
+
+  # ============================================================================
+  # STAGE 2: Container Image Build & Verification
+  # ============================================================================
+  - stage: DockerPackage
+    displayName: 'CI: Build & Verify Docker Image'
+    dependsOn: BuildAndTest
+    condition: succeeded()
+    jobs:
+      - job: DockerBuild
+        displayName: 'Build Docker Container'
+        steps:
+          - checkout: self
+            displayName: 'Checkout Code from GitHub'
+
+          - script: |
+              echo "Building Docker container image for $(dockerImageName)..."
+              docker build -t $(dockerImageName):$(Build.BuildId) -t $(dockerImageName):latest .
+              echo "Docker build completed successfully."
+              docker images | grep $(dockerImageName)
+            displayName: 'Build Docker Image for Local Deployment'
