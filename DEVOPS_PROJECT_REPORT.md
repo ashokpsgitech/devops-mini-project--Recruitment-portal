@@ -182,7 +182,15 @@ To provide visual evidence for your evaluation, capture the following **9 recomm
   ```
 - **What it Demonstrates:** Robust test coverage (Security authorization, JPA repositories, REST controllers) verified before release.
 
-#### 📸 Screenshot 7: GitHub Actions CI/CD Pipeline
+#### 📸 Screenshot 7: Database Versioning & Schema Migration (Flyway)
+- **Terminal Command:**
+  ```powershell
+  docker compose exec postgres psql -U recruitment_app -d recruitment_db -c "SELECT installed_rank, version, description, type, success FROM flyway_schema_history;"
+  ```
+- **What to Capture:** Table showing all 3 Flyway migrations (`V1`, `V2`, `V3`) with `success = t`.
+- **What it Demonstrates:** Automated database migrations and version control in production.
+
+#### 📸 Screenshot 8: GitHub Actions CI/CD Pipeline
 - **URL / Location:** `https://github.com/ashokpsgitech/devops-mini-project--Recruitment-portal/actions`
 - **What to Capture:** The latest workflow run showing the **green checkmark** with all 3 completed jobs:
   1. `Build & Test (Java 21)`
@@ -208,3 +216,4 @@ To provide visual evidence for your evaluation, capture the following **9 recomm
 ## 7. Conclusion
 
 The TalentBridge ATS project provides a comprehensive implementation of modern DevOps principles. By combining **Spring Boot 3** and **PostgreSQL** with **Multi-Stage Docker builds**, **Dual CI Automation (GitHub Actions + Azure Pipelines)**, **DevSecOps Trivy Scans**, and **Flyway Database Versioning**, the application achieves reproducible, zero-downtime, and enterprise-grade deployment reliability.
+
