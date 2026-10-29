@@ -41,4 +41,21 @@ public class InterviewFeedback {
 
     @Column(name = "submitted_at", nullable = false, updatable = false)
     private Instant submittedAt = Instant.now();
+
+    // Template compatibility accessors
+    public String getTechnicalNotes() {
+        return this.strengths != null ? this.strengths : this.summary;
+    }
+
+    public void setTechnicalNotes(String technicalNotes) {
+        this.strengths = technicalNotes;
+    }
+
+    public String getCulturalFitNotes() {
+        return this.concerns != null ? this.concerns : this.summary;
+    }
+
+    public void setCulturalFitNotes(String culturalFitNotes) {
+        this.concerns = culturalFitNotes;
+    }
 }

@@ -64,7 +64,7 @@
         <div class="tb-card-header">
             <h2 class="tb-card-title">Evaluation Scorecard</h2>
             <span class="tb-badge"
-                  th:classappend="${feedback.recommendation.name().contains('HIRE') ? 'tb-badge-hired' : 'tb-badge-rejected'}"
+                  th:classappend="${feedback.recommendation != null and (feedback.recommendation.contains('YES') or feedback.recommendation.contains('HIRE')) ? 'tb-badge-hired' : 'tb-badge-rejected'}"
                   th:text="${feedback.recommendation}">STRONG_HIRE</span>
         </div>
 

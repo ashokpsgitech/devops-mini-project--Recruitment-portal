@@ -66,7 +66,7 @@
                                       th:text="${#temporals.format(h.changedAt, 'MMM dd, yyyy HH:mm')}">Date</span>
                             </div>
                             <div style="color: var(--slate-500); font-size: 0.85rem; margin-top: 0.2rem;">
-                                Changed by: <strong th:text="${h.changedBy}">recruiter</strong>
+                                Changed by: <strong th:text="${h.changedBy != null ? h.changedBy.fullName : 'System'}">recruiter</strong>
                                 <span th:if="${h.notes != null and not #strings.isEmpty(h.notes)}" th:text="' — ' + ${h.notes}">notes</span>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="i : ${interviews}">
-                            <td style="font-weight: 600;" th:text="${i.type}">TECHNICAL</td>
+                            <td style="font-weight: 600;" th:text="${i.interviewType != null ? i.interviewType : i.type}">TECHNICAL</td>
                             <td th:text="${i.interviewer != null ? i.interviewer.fullName : 'Unassigned'}">Interviewer</td>
                             <td th:text="${#temporals.format(i.scheduledAt, 'MMM dd, HH:mm')}">Date</td>
                             <td><span class="tb-badge" th:classappend="${i.status.name() == 'COMPLETED' ? 'tb-badge-hired' : 'tb-badge-interview'}" th:text="${i.status}">STATUS</span></td>

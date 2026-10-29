@@ -55,4 +55,29 @@ public class Interview {
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
+
+    // Template compatibility accessors
+    public InterviewType getType() {
+        return this.interviewType;
+    }
+
+    public void setType(InterviewType type) {
+        this.interviewType = type;
+    }
+
+    public Integer getDurationMinutes() {
+        return this.durationMins;
+    }
+
+    public void setDurationMinutes(Integer durationMinutes) {
+        this.durationMins = durationMinutes;
+    }
+
+    public String getLocationOrUrl() {
+        return this.location;
+    }
+
+    public void setLocationOrUrl(String locationOrUrl) {
+        this.location = locationOrUrl;
+    }
 }

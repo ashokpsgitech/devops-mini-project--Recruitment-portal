@@ -71,10 +71,11 @@ public class InterviewController {
                                     @RequestParam(defaultValue = "60") int durationMinutes,
                                     @RequestParam Interview.InterviewType interviewType,
                                     @RequestParam String locationOrUrl,
+                                    @RequestParam(required = false) String notes,
                                     RedirectAttributes redirectAttributes) {
         Instant scheduledAt = scheduledTime.toInstant(ZoneOffset.UTC);
         Interview interview = interviewService.schedule(
-                applicationId, scheduledAt, durationMinutes, locationOrUrl, interviewType, interviewerId);
+                applicationId, scheduledAt, durationMinutes, locationOrUrl, interviewType, interviewerId, notes);
         redirectAttributes.addFlashAttribute("success",
                 "Interview scheduled successfully with " + (interview.getInterviewer() != null ? interview.getInterviewer().getFullName() : "assigned interviewer") + ".");
         return "redirect:/applications/" + applicationId;

@@ -43,6 +43,13 @@ public class InterviewService {
     @Transactional
     public Interview schedule(Long applicationId, Instant scheduledAt, Integer durationMins,
                                String location, Interview.InterviewType type, Long interviewerId) {
+        return schedule(applicationId, scheduledAt, durationMins, location, type, interviewerId, null);
+    }
+
+    @Transactional
+    public Interview schedule(Long applicationId, Instant scheduledAt, Integer durationMins,
+                               String location, Interview.InterviewType type, Long interviewerId,
+                               String notes) {
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found: " + applicationId));
 
@@ -53,9 +60,16 @@ public class InterviewService {
         interview.setLocation(location);
         interview.setInterviewType(type);
         interview.setStatus(Interview.Status.SCHEDULED);
+        interview.setNotes(notes);
 
         if (interviewerId != null) {
             userRepository.findById(interviewerId).ifPresent(interview::setInterviewer);
+        }
+
+        // Auto-advance application stage to INTERVIEW if currently in APPLIED or SHORTLISTED
+        if (app.getStage() == Application.Stage.APPLIED || app.getStage() == Application.Stage.SHORTLISTED) {
+            app.setStage(Application.Stage.INTERVIEW);
+            applicationRepository.save(app);
         }
 
         Interview saved = interviewRepository.save(interview);
